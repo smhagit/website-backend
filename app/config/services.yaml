@@ -1,0 +1,24 @@
+parameters:
+    app.api_static_apikey: '%env(resolve:API_STATIC_APIKEY)%'
+    app.home_assistant_baseurl: '%env(resolve:HOME_ASSISTANT_BASEURL)%'
+    app.home_assistant_token: '%env(resolve:HOME_ASSISTANT_TOKEN)%'
+    app.home_assistant_entity_whitelist: '%env(resolve:HOME_ASSISTANT_ENTITY_WHITELIST)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Service\HomeAssistantApi:
+        arguments:
+            $apiKey: '%app.api_static_apikey%'
+            $haBaseUrl: '%app.home_assistant_baseurl%'
+            $haToken: '%app.home_assistant_token%'
+            $haEntityWhitelist: '%app.home_assistant_entity_whitelist%'
