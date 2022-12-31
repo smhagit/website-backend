@@ -12,27 +12,20 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    #- name: Cache node modules
-    #  uses: actions/cache@v1
-    #  with:
-    #    path: ~/.npm
-    #    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-    #    restore-keys: |
-    #      ${{ runner.os }}-node-
-
-    - name: Node Setup
-      uses: actions/setup-node@v1
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
       with:
-        node-version: '12.x'
-
-    - name: npm run build
+        php-version: 8.1
+        coverage: none
+        tools: composer:v2
+      
+    - name: Composer
       run: |
         cd app
-        npm i @angular/cli && npm i
-        npm run build:ci
+        composer install
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag smhagit/website:latest
+      run: docker build . --file Dockerfile --tag smhagit/website-backend:latest
     
     - name: Login to DockerHub
       uses: docker/login-action@v1
@@ -41,4 +34,4 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     
     - name: Push the Docker image
-      run: docker push smhagit/website
+      run: docker push smhagit/website-backend
